@@ -12,6 +12,7 @@ on_game_status_change = empty
 on_goal = empty
 on_game_end = empty
 on_round_end = empty
+on_launch = empty
 
 async def fetch(session: aiohttp.ClientSession, url):
     async with async_timeout.timeout(10):
@@ -49,3 +50,5 @@ async def _game_status_change(old: models.GameStatus, new: models.GameStatus, da
         await on_game_end(data)
     if new == models.GameStatus.ROUND_OVER:
         await on_round_end(data)
+    if new == models.GameStatus.PLAYING:
+        await on_launch(data)
