@@ -16,6 +16,6 @@ EchoVRのゴール、ラウンド終了などの情報をWebhookを使ってDisc
 Python 3.9.7, PCでのみテストしています。configの`HOST`をいじればQuestでも動くかもしれませんが、非推奨です。  
 
 現状一人ぼっちのPrivate Matchでのみテストしていますが理論上はPublicでも動くはずです。  
-一緒にテストしてくれる優しい方がいれば、https://discord.gg/4JpMy2k8 に来て声かけてください。
+一緒にテストしてくれる優しい方がいれば、https://discord.gg/uS2Ae5NzrM に来て声かけてください。
 
 AI TeammatesはAPIから情報が来なかったんでサポートしていません。
