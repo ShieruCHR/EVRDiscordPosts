@@ -1,6 +1,5 @@
 from datetime import timedelta
-from models import MatchType, Team
-import random
+from models import Team
 
 def get_team(teams: list[Team], player_name: str):
     for team in teams:
