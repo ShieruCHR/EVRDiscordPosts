@@ -1,18 +1,21 @@
 import asyncio
 from discord_webhook.webhook import DiscordEmbed
 import config
+import datetime
 
 from discord_webhook import DiscordWebhook
 
 import api
 from models import APIResult, GoalInfo
-from utils import get_team
+from utils import get_team, timedelta_to_str
 
+
+last_launch = None
 
 async def change(data, old, new):
     print("Game status changed: {old} -> {new}".format(old=old, new=new))
 
-async def goal(data, goal_info: GoalInfo):
+async def goal(data: APIResult, goal_info: GoalInfo):
     print(
         f"{goal_info.player_name} of {goal_info.team} goal (assisted by {goal_info.assistted_player_name})\n" +
         f"{goal_info.goal_type} - {goal_info.point_amount} points"
@@ -27,9 +30,14 @@ async def goal(data, goal_info: GoalInfo):
         embed.add_embed_field(name="Assisted By", value=goal_info.assistted_player_name, inline=False)
     embed.add_embed_field(name="シュート距離", value=f"{round(goal_info.distance_thrown, 2)}メートル")
     embed.add_embed_field(name="シュート速度", value=f"{round(goal_info.disc_speed, 2)}m/s")
+    embed.add_embed_field(name="Launchからの経過時間", value=f"{timedelta_to_str(datetime.datetime.utcnow() - last_launch)}")
     
     webhook.add_embed(embed)
     webhook.execute()
+
+async def launch(data: APIResult):
+    global last_launch
+    last_launch = datetime.datetime.utcnow()
 
 async def over(data: APIResult):
     webhook = DiscordWebhook(
@@ -65,6 +73,7 @@ api.on_game_status_change = change
 api.on_goal = goal
 api.on_game_end = end
 api.on_round_end = over
+api.on_launch = launch
 
 def main():
     
