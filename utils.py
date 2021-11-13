@@ -13,5 +13,3 @@ def timedelta_to_str(delta: timedelta):
     mm, ss = divmod(delta.seconds, 60)
     s = "%d分%02d秒" % (mm, ss)
     return s
-
-print(timedelta_to_str(timedelta(minutes=5, seconds=30, microseconds=120)))
