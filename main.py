@@ -6,7 +6,7 @@ from discord_webhook import DiscordWebhook
 
 import api
 from models import APIResult, GoalInfo
-from utils import generate_tweet_text, get_team
+from utils import get_team
 
 
 async def change(data, old, new):
@@ -57,7 +57,6 @@ async def end(data: APIResult):
     print("{team} won - Orange: {orange}, Blue: {blue}".format(team=beat_team.name, orange=data.orange_round_score, blue=data.blue_round_score))
     if beat_team == client_team:
         print("Victory!")
-        print(generate_tweet_text(data.match_type, beat_team.name, data.blue_points, data.orange_points, data.client_name))
 
 
 
