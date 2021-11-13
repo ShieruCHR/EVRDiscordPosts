@@ -1,3 +1,4 @@
+from datetime import timedelta
 from enum import Enum
 
 class APIResult:
@@ -5,6 +6,7 @@ class APIResult:
         # TODO: この辺の処理をちゃんとやる
         self.disc = data.get("disc", {})
         self.session_id = data.get("sessionid", "")
+        self.game_clock = timedelta(seconds=data.get("game_clock", 0))
         self.game_clock_display = data.get("game_clock_display", "")
         self.game_status = GameStatus(data.get("game_status", "unknown"))
         self.session_ip = data.get("sessionip", "")
