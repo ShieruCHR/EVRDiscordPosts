@@ -7,8 +7,11 @@ from discord_webhook import DiscordWebhook
 
 import api
 from models import APIResult, GameStatus, GoalInfo
-from utils import get_team, timedelta_to_str
+from utils import timedelta_to_str
+from logging import WARNING, basicConfig, getLogger
 
+basicConfig(level=WARNING)
+logger = getLogger(__name__)
 last_launch = None
 
 async def change(data: APIResult, old: GameStatus, new: GameStatus):
@@ -32,6 +35,7 @@ async def goal(data: APIResult, goal_info: GoalInfo):
 async def launch(data: APIResult):
     global last_launch
     last_launch = datetime.datetime.utcnow()
+    logger.info(f"Launch: {last_launch}")
 
 async def over(data: APIResult):
     webhook = DiscordWebhook(
@@ -61,6 +65,8 @@ api.on_round_end = over
 api.on_launch = launch
 
 def main():
+    logger.info(f"Configuration: Call http://{config.HOST}:{config.PORT}{config.ENDPOINT} per {config.INTERVAL} seconds.")
+    logger.info(f"Discord Webhook URL: {config.WEBHOOK_URL}")
     loop = asyncio.get_event_loop()
     task = loop.create_task(api.run(host=config.HOST, port=config.PORT, endpoint=config.ENDPOINT, interval=config.INTERVAL))
     try:
@@ -68,7 +74,7 @@ def main():
     except asyncio.CancelledError:
         pass
     except Exception as e:
-        print(e)
+        logger.critical("An internal error occurred, aborting.", exc_info=e)
 
 
 if __name__ == '__main__':

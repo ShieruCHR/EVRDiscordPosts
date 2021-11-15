@@ -3,7 +3,9 @@ import models
 import aiohttp
 import async_timeout
 import json
+from logging import getLogger
 
+logger = getLogger(__name__)
 async def empty(*args, **kwargs):
     pass
 
@@ -31,9 +33,12 @@ async def run(host: str = "127.0.0.1", port: int = 6721, endpoint: str = "/sessi
         while True:
             try:
                 data = await fetch(session, f"http://{host}:{port}{endpoint}")
+                logger.debug(f"API Result: {data}")
                 await parse(models.APIResult(json.loads(data)))
+            except aiohttp.ClientConnectionError as e:
+                logger.debug("Failed to call EchoVR API.", exc_info=e)
             except Exception as e:
-                print(e)
+                logger.warning("Failed to call EchoVR API.", exc_info=e)
             await asyncio.sleep(interval)
 
 async def parse(data: models.APIResult):
@@ -43,6 +48,7 @@ async def parse(data: models.APIResult):
         last_game_status = data.game_status
 
 async def _game_status_change(old: models.GameStatus, new: models.GameStatus, data: models.APIResult):
+    logger.info(f"Game Status changed: {old} -> {new}")
     await on_game_status_change(data, old, new)
     if new == models.GameStatus.SCORE:
         await on_goal(data, data.last_score)
